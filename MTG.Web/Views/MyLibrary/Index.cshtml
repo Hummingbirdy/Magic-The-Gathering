@@ -1,0 +1,42 @@
+﻿@using MTG.Helpers
+@model MTG.Models.MyLibraryModel
+@{
+    ViewBag.Title = "All Cards";
+    Layout = "~/Views/Shared/_CardsLayout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>HI</title>
+</head>
+<body>
+    <div class="jumbotron">
+        <h1>My Library</h1>
+    </div>
+    <div class="row">
+        <!-- ko foreach: sets-->
+
+        <h1><span class="setHeaders" data-bind="text: name"></span> <button id="Addcardicon" data-bind="click: $root.expandSet()"><i class="fa fa-plus"></i></button></h1>
+
+        <!-- /ko -->
+    </div>
+</body>
+</html>
+
+@Scripts.Render("~/scripts/app")
+
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            var page = new MyLibrary(@Html.JsonFor(Model));
+
+            ko.options.deferUpdates = true;
+            ko.applyBindings(page.viewModel, $('#allCards')[0]);
+
+        })
+    </script>
+
+}

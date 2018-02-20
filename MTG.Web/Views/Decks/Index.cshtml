@@ -1,0 +1,54 @@
+﻿@using MTG.Helpers
+@model MTG.Models.DeckModel
+@{
+    ViewBag.Title = "My Decks";
+    Layout = "~/Views/Shared/_CardsLayout.cshtml";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <div class="jumbotron">
+        <h1>My Decks</h1>
+    </div>
+    <div class="row decks">
+        <!-- ko foreach: decks -->
+        <div class="col-md-3">
+            <div class="card-box"> @*data-bind="attr: {id: id}, event: { mouseover: $parent.hoverOverCard.bind($data, id), mouseout: $parent.hoverOffCard.bind($data, id)}">*@
+                <a data-bind="attr: {href: url}">
+                    @*<img data-bind="attr: {src: src}" />*@
+                    <h2 data-bind="text: deckName"></h2>
+                    <div id="manaRow" data-bind="html: colors"></div>
+                </a>
+                @*<!-- ko if: hovering  -->
+                <div class="positioner">
+                    <button id="AddCardIcon" align="right"><b><span data-bind="text: amount"></span></b></button>
+                </div>
+                <!-- /ko -->*@
+            </div>
+        </div>
+
+        <!-- /ko -->
+
+    </div>
+</body>
+</html>
+
+@Scripts.Render("~/scripts/app")
+
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            var page = new Decks(@Html.JsonFor(Model));
+
+            ko.options.deferUpdates = true;
+            ko.applyBindings(page.viewModel, $('#decks')[0]);
+
+        })
+    </script>
+
+}

@@ -1,0 +1,135 @@
+﻿@using MTG.Helpers
+@model MTG.Models.DeckDetailViewModel
+@{
+    ViewBag.Title = "My Decks";
+    Layout = "~/Views/Shared/_CardsLayout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>DeckView</title>
+</head>
+<body>
+    <div class="jumbotron">
+        <h1><span data-bind="text: name"></span> x<span data-bind="text: amount"></span></h1>
+        <div class="row">
+            <!-- ko if: planeswalkers.length > 0 -->
+            <div class="col-md-4">
+                <label>Planeswalker</label>
+                <ul>
+                    <!-- ko foreach: planeswalkers-->
+                    <li><span data-bind="text: name"></span> x<span data-bind="text: amount"></span></li>
+                    <!-- /ko -->
+                </ul>
+            </div>
+            <!-- /ko -->
+            <!-- ko if: creatures.length > 0-->
+            <div class="col-md-4">
+                <label>Creature</label>
+                <ul>
+                    <!-- ko foreach: creatures-->
+                    <li><span data-bind="text: name"></span> x<span data-bind="text: amount"></span></li>
+                    <!-- /ko -->
+                </ul>
+            </div>
+            <!-- /ko -->
+            <!-- ko if: sorceries.length > 0 -->
+            <div class="col-md-4">
+                <label>Sorcery</label>
+                <ul>
+                    <!-- ko foreach: sorceries-->
+                    <li><span data-bind="text: name"></span> x<span data-bind="text: amount"></span></li>
+                    <!-- /ko -->
+                </ul>
+            </div>
+            <!-- /ko -->
+            <!-- ko if: instants.length > 0 -->
+            <div class="col-md-4">
+                <label>Instant</label>
+                <ul>
+                    <!-- ko foreach: instants-->
+                    <li><span data-bind="text: name"></span> x<span data-bind="text: amount"></span></li>
+                    <!-- /ko -->
+                </ul>
+            </div>
+            <!-- /ko -->
+           <!-- ko if: enchantments > 0 -->
+            <div class="col-md-4">
+                <label>Enchantment</label>
+                <ul>
+                    <!-- ko foreach: enchantments-->
+                    <li><span data-bind="text: name"></span> x<span data-bind="text: amount"></span></li>
+                    <!-- /ko -->
+                </ul>
+            </div>
+            <!-- /ko -->
+            <!-- ko if: artifacts.length > 0 -->
+            <div class="col-md-4">
+                <label>Artifact</label>
+                <ul>
+                    <!-- ko foreach: artifacts-->
+                    <li><span data-bind="text: name"></span> x<span data-bind="text: amount"></span></li>
+                    <!-- /ko -->
+                </ul>
+            </div>
+            <!-- /ko -->
+            <!-- ko if: lands.length > 0 -->
+            <div class="col-md-4">
+                <label>Land</label>
+                <ul>
+                    <!-- ko foreach: lands-->
+                    <li><span data-bind="text: name"></span> x<span data-bind="text: amount"></span></li>
+                    <!-- /ko -->
+                </ul>
+            </div>
+            <!-- /ko -->
+            <!-- ko if: other.length > 0 -->
+            <div class="col-md-4">
+                <label>Other</label>
+                <ul>
+                    <!-- ko foreach: other-->
+                    <li><span data-bind="text: name"></span> x<span data-bind="text: amount"></span></li>
+                    <!-- /ko -->
+                </ul>
+            </div>
+            <!-- /ko -->
+        </div>
+    </div>
+    <div class="row detail">
+        <!-- ko foreach: cards -->
+        <div class="col-md-3">
+            <div class="card-box" data-bind="attr: {id: id}, event: { mouseover: $parent.hoverOverCard.bind($data, id), mouseout: $parent.hoverOffCard.bind($data, id)}">
+                <a data-bind="attr: {href: url}">
+                    <img data-bind="attr: {src: src}" />
+                </a>
+                <!-- ko if: hovering  -->
+                <div class="positioner">
+                    <button id="AddCardIcon" align="right"><b><span data-bind="text: amount"></span></b></button>
+                </div>
+                <!-- /ko -->
+            </div>
+        </div>
+
+        <!-- /ko -->
+
+    </div>
+</body>
+</html>
+
+@Scripts.Render("~/scripts/app")
+
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            var page = new DeckDetail(@Html.JsonFor(Model));
+
+            ko.options.deferUpdates = true;
+            ko.applyBindings(page.viewModel, $('#detail')[0]);
+
+        })
+    </script>
+
+}

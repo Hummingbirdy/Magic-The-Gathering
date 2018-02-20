@@ -1,0 +1,43 @@
+﻿@using MTG.Helpers
+@model MTG.Entities.Models.AllCardsHomeModel
+@{
+    ViewBag.Title = "All Cards";
+    Layout = "~/Views/Shared/_CardsLayout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <br />
+    <br />
+
+    <div id="allCards">
+        <div class="loadingIndicator">
+            @Html.Partial("_Spinner")
+        </div>
+        <div class="mainPage">
+            @Html.Partial("_Page")
+        </div>
+        @Html.Partial("_AddCard")
+    </div>
+
+
+
+    @Scripts.Render("~/scripts/app")
+
+    @section scripts{
+        <script type="text/javascript">
+            $(function () {
+                var page = new AllCards(@Html.JsonFor(Model));
+
+                ko.options.deferUpdates = true;
+                ko.applyBindings(page.viewModel, $('#allCards')[0]);
+
+            })
+        </script>
+
+    }
+</body>
+</html>

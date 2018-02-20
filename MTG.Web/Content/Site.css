@@ -1,0 +1,308 @@
+﻿body,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif;}
+body, html {
+    height: 100%;
+    color: #777;
+    line-height: 1.8;
+}
+h1{
+    color: black !important;
+}
+
+h2, h2 a:hover{
+    color: lightgray !important;
+}
+
+/* Create a Parallax Effect */
+.bgimg-1, .bgimg-2, .bgimg-3 {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* First image (Logo. Full height) */
+.bgimg-1 {
+    background-image: url('/Content/Img/homeWall.png');
+    min-height: 100%;
+}
+
+
+.w3-wide {letter-spacing: 10px;}
+.w3-hover-opacity {cursor: pointer;}
+
+/* Turn off parallax scrolling for tablets and phones */
+@media only screen and (max-device-width: 1024px) {
+    .bgimg-1, .bgimg-2, .bgimg-3 {
+        background-attachment: scroll;
+    }
+}
+
+
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+img {
+    display: block;
+    margin: 0 auto;
+}
+
+.card-box{
+  width: 230px;
+  position: relative;
+  box-shadow: 10px 10px 5px #888888;
+  background-color: black;
+  margin: auto;
+  margin-bottom: 20px;
+}
+
+.card-hover{
+    border: 3px solid #8BC0BF;
+    margin-bottom: 14px;
+}
+
+.positioner{
+    /*width: 90%;*/
+    /*height: 20%;*/
+    position: absolute;
+    right: -20px;
+    top: -20px;
+}
+
+.icon {    
+    color: #8BC0BF;
+    font-size: 3em;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#AddCardIcon{
+    /*display:flex;
+    justify-content: flex-end;
+    align-items: center;*/
+    border-radius: 25px;
+    border: 1px solid black;
+    height: 50px;
+    width: 50px;
+}
+
+#detailsBlock{
+  width: 500px;
+  position: relative;
+  box-shadow: 10px 10px 5px #888888;
+  background-color: black;
+  margin-bottom: 20px;
+  color: lightgray
+}
+
+.height-full {
+  min-height: 100vh;
+}
+
+#home{
+    margin: 19% auto;
+    text-align: center;
+    color: lightgray;
+}
+#home a:link,
+#home a:visited,
+#home a:hover,
+#home a:active,
+.home-title{
+    color: lightgray;
+    font-weight: bold;
+    font-size: 40px;
+}
+
+
+.manaSelect{
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    background-color: white;
+    /*width: 300px;*/
+    /*height: 50px;*/     
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+}
+
+#manaRow{
+    white-space: nowrap; 
+    display: flex;
+    justify-content: center;
+}
+
+.manaSelect img{
+    width: 40px;
+    height: 40px;
+    list-style: none;
+    display: inline;
+    margin: 5px;
+}
+
+#manaRow img{
+    width: 50px;
+    height: 50px;
+    list-style: none;
+    display: inline;
+    border-radius: 26px;
+    margin: 5px;
+}
+
+.manaSelect .selected {
+    border: 2px solid black;
+   
+}
+
+#cardText {
+    /*white-space: nowrap;*/
+    display: flex;
+    justify-content: center;
+}
+
+#cardText img {
+    width: 25px;
+    height: 25px;
+    list-style: none;
+    display: inline;
+    border-radius: 12px;
+    margin: 1px;
+}
+
+.main-dropdown,
+.advanced-dropdown{
+    font-size: 15px;
+    text-align: left;
+}
+
+.advanced-search{
+    font-size: 15px !important;
+}
+
+.advanced-textbox{
+    font-size: 15px;
+    background-color: #fff;
+    color: #333;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    border-style: solid;
+    border-color: #aeaeae;
+    display: inline;
+    height: 1.65em;
+    line-height: 1.65em;
+    padding: .177em 0;
+    text-indent: 0.33em;
+    border: 0;
+    margin: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0, 0.075);
+    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075);
+    border-radius: 3px 0 0 3px;
+}
+
+.operator-line{
+    display: flex;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.operator{
+    border-radius: 25px;
+    text-align: center;
+    width: 55px;
+    height: 35px;
+    background-color: darkgray;
+    color: white;
+    margin: 1px;
+    border-style: solid;
+    border-color: black;
+}
+
+.search-results{
+    /*white-space: nowrap;*/
+}
+
+.bubble{
+    background-color: #8BC0BF;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 10px;
+    list-style: none;
+    display: inline;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.modal-content {
+  background-clip: padding-box;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  outline: 0 none;
+  position: relative;
+}
+.modal-dialog {
+  z-index: 2200;
+}
+.modal-body {
+  padding: 20px 30px 30px 30px;
+}
+.inmodal .modal-body {
+  background: #f8fafb;
+}
+.inmodal .modal-header {
+  padding: 30px 15px;
+  text-align: center;
+}
+.animated.modal.fade .modal-dialog {
+  -webkit-transform: none;
+  -ms-transform: none;
+  -o-transform: none;
+  transform: none;
+}
+.inmodal .modal-title {
+  font-size: 26px;
+}
+.inmodal .modal-icon {
+  font-size: 84px;
+  color: #e2e3e3;
+}
+.modal-footer {
+  margin-top: 0;
+}
+
+.showSpinner {
+    display: flex;
+    justify-content: center;
+    color: #0D4140;
+    font-size: 5em;
+    min-height: 100vh;
+    padding-top: 10%;
+}
+
+.setHeaders {
+    margin: 5px;
+}
+
+
+
+
+

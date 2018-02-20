@@ -1,0 +1,59 @@
+﻿
+@using MTG.Helpers
+@model MTG.Entities.Models.CardDetailViewModel
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_CardDetailLayout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <div id="card" class="page">
+        <div class="jumbotron">
+            <h1>MTG</h1>
+        </div>
+
+
+        <!-- ko foreach: cards -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card-box">
+                    <img data-bind="attr: {src: src}" />
+                </div>
+            </div>
+            <div class="col-md-6" id="detailsBlock">
+                <div style="font-size: 20px"><b>Card Name: </b><span data-bind="text: name"></span></div>
+                <div id="manaRow" data-bind="html: manaCost"></div>
+                <div><b>Mana Cost: </b><span data-bind="text: convertedManaCost"></span></div>
+                <!-- ko if: power != null-->
+                <div><b>P/T: </b><span data-bind="text: power"></span>/<span data-bind="text: toughness"></span></div>
+                <!-- /ko -->
+                <div><b>Type: </b><span data-bind="text: type"></span></div>
+                <div><b>Rarity: </b><span data-bind="text: rarity"></span></div>
+                <div id="cardText"><b>Text: </b><span data-bind="html: ' ' + text"></span></div>
+                <div><i><span data-bind="text: flavor"></span></i></div>               
+                <div><b>Set: </b><span data-bind="text: setName"></span></div>
+            </div>
+        </div>
+        <!-- /ko -->
+    </div>
+
+    @Scripts.Render("~/scripts/app")
+
+    @section scripts{
+        <script type="text/javascript">
+            $(function () {
+                var newHire = new CardDetail(@Html.JsonFor(Model));
+
+                ko.options.deferUpdates = true;
+                ko.applyBindings(newHire.viewModel, $('#card')[0]);
+
+            })
+        </script>
+
+    }
+</body>
+</html>

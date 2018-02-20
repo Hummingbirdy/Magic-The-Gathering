@@ -1,0 +1,86 @@
+﻿<div class="modal fade" id="addCard" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+                <h4 class="modal-title" data-bind="text: cardAmounts().cardName"></h4>
+
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover" style="width: 100%">
+                    <tbody>
+                        <tr>
+                            <th width="5%"></th>
+                            <th width="5%">
+                                <input type="checkbox" />
+                            </th>
+                            <th>
+                                <label>Library</label>
+                            </th>
+                            <th width="5%">
+                                <i class="fa fa-minus-circle fa-lg" aria-hidden="true"></i>
+                            </th>
+                            <th width="10%">
+                                <input id="cardNumber" class="k-textbox advanced-search" data-bind="textInput: cardAmounts().libraryAmount" style="width:50px" />
+                            </th>
+                            <th width="5%">
+                                <i class="fa fa-plus-circle fa-lg" aria-hidden="true"></i>
+                            </th>
+                            <th width="5%"></th>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table-hover" style="width: 100%">
+                    <tbody data-bind="foreach: cardAmounts().deckInfo">
+                        <tr>
+                            <th width="5%"></th>
+                            <th width="5%">
+                                <input type="checkbox" data-bind="checkedValue: id, checked: $parent.deckIds" />
+                            </th>
+                            <th>
+                                <label><span data-bind="text: deckName"></span></label>
+                            </th>
+                            <th width="5%">
+                                <i class="fa fa-minus-circle fa-lg" aria-hidden="true"></i>
+                            </th>
+                            <th width="10%">
+                                <input class="k-textbox advanced-search" data-bind="deckAmount" style="width: 50px" />
+                            </th>
+                            <th width="5%">
+                                <i class="fa fa-plus-circle fa-lg" aria-hidden="true"></i>
+                            </th>
+                            <th width="5%"></th>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <th width="5%"></th>
+                            <th width="5%">
+                                <input type="checkbox" />
+                            </th>
+                            <th>
+                                <input id="newDeck" class="k-textbox advanced-search" />
+                            </th>
+                            <th width="5%">
+                                <i class="fa fa-minus-circle fa-lg" aria-hidden="true"></i>
+                            </th>
+                            <th width="10%">
+                                <input class="k-textbox advanced-search" style="width: 50px" />
+                            </th>
+                            <th width="5%">
+                                <i class="fa fa-plus-circle fa-lg" aria-hidden="true"></i>
+                            </th>
+                            <th width="5%"></th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <span class="btn btn-default" data-dismiss="modal">Close</span>
+                <span data-bind="click: saveCardAdd(selectedCard, library, deckIds)" class="btn btn-primary" data-dismiss="modal">Add</span>
+            </div>
+        </div>
+    </div>
+</div>
+
