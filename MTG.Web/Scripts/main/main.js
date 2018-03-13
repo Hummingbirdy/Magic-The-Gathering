@@ -5,13 +5,24 @@ var AllCards = (function () {
         this.modalConatiner = $("#addCard");
         this.deckIds = ko.observableArray([]);
         this.clickAdd = function (id) {
+            var self = _this;
             $.ajax({
                 url: "/Cards/GetAddInfo",
                 type: "POST",
                 data: { cardId: id },
                 cache: false,
                 success: function (results) {
-                    _this.viewModel.cardAmounts(results);
+                    self.viewModel.cardAmounts(results);
+                    self.viewModel.cardAmounts().libraryAmount = ko.observable(self.viewModel.cardAmounts().libraryAmount);
+                    self.viewModel.cardAmounts().deckInfo.forEach(function (d) {
+                        d.deckAmount = ko.observable(d.deckAmount);
+                    });
+                    if (self.viewModel.cardAmounts().libraryAmount() > 0) {
+                        $("#minus_lib").removeClass("notAllowed").addClass("pointer");
+                    }
+                    else {
+                        $("#minus_lib").removeClass("pointer").addClass("notAllowed");
+                    }
                     $("#addCard").modal({
                         show: true,
                         backdrop: 'static'
@@ -37,6 +48,46 @@ var AllCards = (function () {
                     c.hovering(false);
                 }
             });
+        };
+        this.incrementAmount = function (index, deckName) {
+            if (deckName === "library") {
+                if (_this.viewModel.cardAmounts().libraryAmount() === 0) {
+                    $("#minus_" + index).removeClass("notAllowed").addClass("pointer");
+                }
+                _this.viewModel.cardAmounts().libraryAmount(_this.viewModel.cardAmounts().libraryAmount() + 1);
+            }
+            else {
+                _this.viewModel.cardAmounts().deckInfo.forEach(function (d) {
+                    if (d.deckName === deckName) {
+                        if (d.deckAmount() === 0) {
+                            $("#minus_" + index).removeClass("notAllowed").addClass("pointer");
+                        }
+                        d.deckAmount(Number(d.deckAmount()) + 1);
+                    }
+                });
+            }
+        };
+        this.deincrementAmount = function (index, deckName) {
+            if (deckName === "library") {
+                if (_this.viewModel.cardAmounts().libraryAmount() === 1) {
+                    $("#minus_" + index).removeClass("pointer").addClass("notAllowed");
+                }
+                if (_this.viewModel.cardAmounts().libraryAmount() > 0) {
+                    _this.viewModel.cardAmounts().libraryAmount(_this.viewModel.cardAmounts().libraryAmount() - 1);
+                }
+            }
+            else {
+                _this.viewModel.cardAmounts().deckInfo.forEach(function (d) {
+                    if (d.deckName === deckName) {
+                        if (d.deckAmount() === 1) {
+                            $("#minus_" + index).removeClass("pointer").addClass("notAllowed");
+                        }
+                        if (d.deckAmount() > 0) {
+                            d.deckAmount(d.deckAmount() - 1);
+                        }
+                    }
+                });
+            }
         };
         this.remove = function (id, list) {
             var self = _this;
@@ -213,6 +264,8 @@ var AllCards = (function () {
         viewModel.title = ko.observable(viewModel.title);
         viewModel.advancedSearch = ko.observable(viewModel.advancedSearch);
         viewModel.search = ko.observable(viewModel.search);
+        viewModel.settings = ko.observable(viewModel.settings);
+        viewModel.colSize = ko.observable(viewModel.colSize);
         viewModel.colors = ko.observableArray([viewModel.colors]);
         viewModel.manaOperator = ko.observable(viewModel.manaOperator);
         viewModel.setOperator = ko.observable(viewModel.setOperator);
@@ -242,7 +295,6 @@ var AllCards = (function () {
         viewModel.libSearch = ko.observableArray();
         viewModel.library = ko.observableArray();
         viewModel.deckIds = ko.observableArray();
-        viewModel.cardAmounts = ko.observable(viewModel.cardAmounts);
         viewModel.remove = this.remove;
         viewModel.clickAdd = this.clickAdd;
         viewModel.hoverOverCard = this.hoverOverCard;
@@ -250,6 +302,11 @@ var AllCards = (function () {
         viewModel.selectedCard = ko.observable(viewModel.selectedCard);
         viewModel.saveCardAdd = this.saveCardAdd;
         viewModel.cardName = ko.observable();
+        viewModel.cardAmounts = ko.observable(viewModel.cardAmounts);
+        viewModel.cardAmounts.deckInfo = ko.observableArray(viewModel.cardAmounts.deckInfo);
+        viewModel.incrementAmount = this.incrementAmount;
+        viewModel.deincrementAmount = this.deincrementAmount;
+        //$("#results").addClass("col-md-" + this.viewModel.colSize());
         $("#showAdvancedSearch").click(function () {
             _this.viewModel.advancedSearch(true);
             _this.viewModel.search(false);
@@ -257,6 +314,14 @@ var AllCards = (function () {
         $("#hideAdvancedSearch").click(function () {
             _this.viewModel.advancedSearch(false);
             _this.viewModel.search(true);
+        });
+        $(".settings").click(function () {
+            if (_this.viewModel.settings()) {
+                _this.viewModel.settings(false);
+            }
+            else {
+                _this.viewModel.settings(true);
+            }
         });
         $("#search").click(function () {
             _this.search();
@@ -548,20 +613,23 @@ var AllCards = (function () {
         //    });
         //});
     }
-    AllCards.prototype.saveCardAdd = function (selectedCard, library, deckIds) {
+    AllCards.prototype.saveCardAdd = function (selectedCard, cardAmounts) {
         if (selectedCard() !== 0) {
-            var decks = deckIds();
-            if (library().length !== 0) {
-                decks.push(0);
-            }
-            var test = $("#newDeck").val();
+            //var decks = deckIds();
+            //if (library().length !== 0) {
+            //    decks.push(0);
+            //}
+            //var test = $("#newDeck").val();
             $.ajax({
                 url: "/Cards/AddCard",
                 type: "POST",
-                data: { cardNumber: selectedCard(), where: decks, howMany: $("#cardNumber").val(), newDeck: $("#newDeck").val() },
+                data: {
+                    cardNumber: selectedCard(),
+                    cardAmounts: cardAmounts()
+                },
                 cache: false,
                 success: function (results) {
-                    deckIds([]);
+                    //deckIds([]);
                 },
                 error: function (error) {
                 }

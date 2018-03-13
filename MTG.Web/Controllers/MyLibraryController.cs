@@ -8,22 +8,32 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MTG.Data.Repos;
 using MTG.Entities.Models;
 
 namespace MTG.Controllers
 {
     public class MyLibraryController : Controller
     {
+        private readonly ISetDataRepository _setData;
+
+        private readonly ICardDataRepository _cardData;
+
+        public MyLibraryController(ISetDataRepository setData, ICardDataRepository cardData)
+        {
+            _setData = setData;
+            _cardData = cardData;
+        }
         // GET: MyLibrary
         [Authorize]
         public ActionResult Index()
         {
             IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            string SqlString = $@"SELECT ID FROM Users WHERE Email = '{User.Identity.Name}'";
-            var Id = db.Query<string>(SqlString).First();
+            string sqlString = $@"SELECT ID FROM Users WHERE Email = '{User.Identity.Name}'";
+            var id = db.Query<int>(sqlString).First();
 
-            List<Card> MyCards = GetMyCards(Id);
-            List<Set> Sets = GetMySets(Id);
+            List<Card> MyCards = _cardData.GetMyCards(id.ToString());
+            List<Set> Sets = _setData.GetMySets(id);
 
             MyCards.ForEach(c =>
             {
@@ -56,67 +66,5 @@ namespace MTG.Controllers
                 Sets = FinalSets
             });
         }
-
-        public List<Set> GetMySets(string Id)
-        {
-            try
-            {
-                IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-                string SqlString = $@"  
-                                        SELECT
-                                            DISTINCT
-	                                        s.[Code],
-                                            s.Name,
-                                            s.ReleaseDate
-                                        FROM
-	                                        Library l
-	                                        left join Cards c on l.CardId = c.Id
-                                            left join [Sets] s on s.Code = c.[Set]
-	                                    Where 
-                                            l.UserId = '{Id}'
-                                        Order BY 
-                                            ReleaseDate DESC";
-
-                var set = (List<Set>)db.Query<Set>(SqlString);
-                return set;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public List<Card> GetMyCards(string Id)
-        {
-            try
-            {
-                IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-                string SqlString = $@"  
-                                        SELECT
-	                                        c.[Name],
-                                            c.[Set],
-                                            c.Id,
-                                            Amount = sum(cast(l.amount as int))
-
-                                        FROM
-	                                        Library l
-	                                        left join Cards c on l.CardId = c.Id
-	                                    Where 
-                                            l.UserId = '{Id}'
-                                        Group By
-                                            c.[Name],
-                                            c.[Set],
-                                            c.Id";
-                var cards = (List<Card>)db.Query<Card>(SqlString);
-                return cards.ToList();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        
-
     }
 }

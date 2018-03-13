@@ -89,7 +89,10 @@ namespace MTG.Controllers
                 Cards = cards,
                 Decks = _deckData.GetMyDecks(User.Identity.Name),
                 Loading = true,
-                CardAmounts = new CardAmounts()
+                CardAmounts = new CardAmounts(),
+                Settings = false,
+                ColSize = "col-md-3"
+
 
             };
 
@@ -163,7 +166,7 @@ namespace MTG.Controllers
                 IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
                 string idCheck = $@"SELECT ID FROM Users WHERE Email = '{User.Identity.Name}'";
                 var id = db.Query<int>(idCheck).First();
-                CardAmounts results = _cardData.GetCardAmountForUser(cardId, id );
+                CardAmounts results = _cardData.GetCardAmountForUser (cardId, id );
 
                 return new CustomJsonResult { Data = results, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }
@@ -174,7 +177,7 @@ namespace MTG.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddCard(string cardNumber, List<int> where, int howMany, string newDeck)
+        public JsonResult AddCard(int cardNumber, CardAmounts cardAmounts)//List<int> where, int howMany, string newDeck)
         {
             try
             {
@@ -185,48 +188,19 @@ namespace MTG.Controllers
                 else
                 {
                     IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-                    string idCheck = $@"SELECT ID FROM Users WHERE Email = '{User.Identity.Name}'";
+                    var idCheck = $@"SELECT ID FROM Users WHERE Email = '{User.Identity.Name}'";
+                    var id = db.Query<int>(idCheck).First();
 
-                    var id = db.Query<string>(idCheck).First();
-
-                    if (newDeck != "")
+                    if (cardAmounts.LibraryAmount != cardAmounts.OrigionalLibraryAmount)
                     {
-                        string addDeck = $@"INSERT INTO DeckNames (UserId, DeckName) VALUES ({id}, '{newDeck}') 
-                                            SELECT Id FROM DeckNames Where DeckName = '{newDeck}'";
-                        var deckId = db.Query<string>(addDeck).First();
-
-                        var insert = $@"INSERT INTO Decks (DeckId, CardId, Amount) Values ({deckId}, {cardNumber}, {howMany}) ";
-                        db.Query(insert);
+                        _cardData.UpdateLibraryCardAmount(cardNumber, id, cardAmounts.LibraryAmount, cardAmounts.CurrentRecordId);
                     }
+                    _cardData.UpdateDeckCardAmounts(cardAmounts.DeckInfo, cardNumber, id);
 
-                    
-                    string inserts = "";
-
-                    where.ForEach(n =>
-                   {
-                       if (n == 0)
-                       {
-                           if(id == "3" || id == "4")
-                           { 
-                                inserts = inserts + $@"INSERT INTO Library (UserId, CardId, Amount) Values (3, {cardNumber}, {howMany}) INSERT INTO Library (UserId, CardId, Amount) Values (4, {cardNumber}, {howMany})";
-                           }
-                           else
-                           {
-                               inserts = inserts + $@"INSERT INTO Library(UserId, CardId, Amount) Values({ id}, { cardNumber}, { howMany})";
-                           }
                        }
-                       else
-                       {
-                           inserts = inserts + $@"INSERT INTO Decks (DeckId, CardId, Amount) Values ({n}, {cardNumber}, {howMany}) ";
-                       }
-                   });
-
-                    
-                    db.Query(inserts);
-                }
 
 
-                return new CustomJsonResult { Data = "test", JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+                    return new CustomJsonResult { Data = "test", JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }
             catch (Exception ex)
             {

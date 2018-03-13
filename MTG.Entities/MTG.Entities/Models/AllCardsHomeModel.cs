@@ -48,6 +48,8 @@ namespace MTG.Entities.Models
         public List<MyDecks> Decks { get; set; }
         public bool Loading { get; set; }
         public CardAmounts CardAmounts { get; set; }
+        public bool Settings { get; set; }
+        public string ColSize { get; set; }
     }
 
     public class SearchList

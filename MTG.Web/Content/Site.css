@@ -159,6 +159,21 @@ img {
     margin: 5px;
 }
 
+.centerWrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+}
+
+/*.manaSelect img{
+    width: 40px;
+    height: 40px;
+    list-style: none;
+    display: inline;
+    margin: 5px;
+}*/
+
 #manaRow img{
     width: 50px;
     height: 50px;
@@ -300,6 +315,38 @@ img {
 
 .setHeaders {
     margin: 5px;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.notAllowed {
+    cursor: not-allowed;
+    color: lightgray;
+}
+
+.settings {
+    margin-left: -50px;
+    margin-bottom: -50px;
+    cursor: pointer;
+}
+
+.settingsBox {
+    margin-top: -20px;
+    margin-left: 50px;
+    border: solid;
+    background-color:  #eee;
+    width: 350px;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 75px;
+}
+
+.settingsClose {
+    display: flex;
+    justify-content: flex-end;
+    cursor: pointer;
 }
 
 

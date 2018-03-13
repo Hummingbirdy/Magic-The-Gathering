@@ -3,82 +3,69 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-
-                <h4 class="modal-title" data-bind="text: cardAmounts().cardName"></h4>
+                <h1 class="modal-title" data-bind="text: cardAmounts().cardName"></h1>
 
             </div>
             <div class="modal-body">
                 <table class="table table-hover" style="width: 100%">
                     <tbody>
                         <tr>
-                            <th width="5%"></th>
-                            <th width="5%">
-                                <input type="checkbox" />
-                            </th>
+                            <th width="10%"></th>
                             <th>
                                 <label>Library</label>
                             </th>
                             <th width="5%">
-                                <i class="fa fa-minus-circle fa-lg" aria-hidden="true"></i>
+                                <div class="centerWrapper">
+                                    <i class="fa fa-minus-circle fa-lg notAllowed" data-bind="click: deincrementAmount.bind($data, 'lib', 'library' ), attr: {id: 'minus_lib'} " aria-hidden="true"></i>
+                                </div>
                             </th>
                             <th width="10%">
-                                <input id="cardNumber" class="k-textbox advanced-search" data-bind="textInput: cardAmounts().libraryAmount" style="width:50px" />
+                                <input id="cardNumber" class="k-textbox advanced-search" data-bind="textInput: cardAmounts().libraryAmount, attr: {id: 'amount_lib'}" style="width:50px" />
                             </th>
                             <th width="5%">
-                                <i class="fa fa-plus-circle fa-lg" aria-hidden="true"></i>
+                                <div class="centerWrapper">
+                                    <i class="fa fa-plus-circle fa-lg pointer" data-bind="click: incrementAmount.bind($data, 'lib', 'library')" aria-hidden="true"></i>
+                                </div>
                             </th>
-                            <th width="5%"></th>
+                            <th width="10%"></th>
                         </tr>
                     </tbody>
                 </table>
                 <table class="table table-hover" style="width: 100%">
-                    <tbody data-bind="foreach: cardAmounts().deckInfo">
-                        <tr>
-                            <th width="5%"></th>
-                            <th width="5%">
-                                <input type="checkbox" data-bind="checkedValue: id, checked: $parent.deckIds" />
-                            </th>
-                            <th>
-                                <label><span data-bind="text: deckName"></span></label>
-                            </th>
-                            <th width="5%">
-                                <i class="fa fa-minus-circle fa-lg" aria-hidden="true"></i>
-                            </th>
-                            <th width="10%">
-                                <input class="k-textbox advanced-search" data-bind="deckAmount" style="width: 50px" />
-                            </th>
-                            <th width="5%">
-                                <i class="fa fa-plus-circle fa-lg" aria-hidden="true"></i>
-                            </th>
-                            <th width="5%"></th>
-                        </tr>
-                    </tbody>
                     <tbody>
+                        <!-- ko foreach: cardAmounts().deckInfo-->
                         <tr>
-                            <th width="5%"></th>
-                            <th width="5%">
-                                <input type="checkbox" />
-                            </th>
+                            <th width="10%"></th>
                             <th>
-                                <input id="newDeck" class="k-textbox advanced-search" />
+                                <!-- ko if: deckName -->
+                                <label><span data-bind="text: deckName"></span></label>
+                                <!-- /ko -->
+                                <!-- ko ifnot: deckName -->
+                                <input id="newDeck" class="k-textbox advanced-search" data-bind="textInput: deckName" value=""/>
+                                <!-- /ko -->
                             </th>
                             <th width="5%">
-                                <i class="fa fa-minus-circle fa-lg" aria-hidden="true"></i>
+                                <div class="centerWrapper">
+                                    <i class="fa fa-minus-circle fa-lg" data-bind="click: $parent.deincrementAmount.bind($data, $index(), deckName), attr: {id: 'minus_' + $index()}, css: deckAmount() == 0 ? 'notAllowed' : 'pointer'" aria-hidden="true"></i>
+                                </div>
                             </th>
                             <th width="10%">
-                                <input class="k-textbox advanced-search" style="width: 50px" />
+                                <input class="k-textbox advanced-search" data-bind="textInput: deckAmount, attr: {id: 'amount_' + $index()}" style="width: 50px" />
                             </th>
                             <th width="5%">
-                                <i class="fa fa-plus-circle fa-lg" aria-hidden="true"></i>
+                                <div class="centerWrapper">
+                                    <i class="fa fa-plus-circle fa-lg pointer" autocomplete="off" data-bind="click: $parent.incrementAmount.bind($data, $index(), deckName)" aria-hidden="true"></i>
+                                </div>
                             </th>
-                            <th width="5%"></th>
+                            <th width="10%"></th>
                         </tr>
+                        <!-- /ko -->
                     </tbody>
                 </table>
             </div>
             <div class="modal-footer">
                 <span class="btn btn-default" data-dismiss="modal">Close</span>
-                <span data-bind="click: saveCardAdd(selectedCard, library, deckIds)" class="btn btn-primary" data-dismiss="modal">Add</span>
+                <span data-bind="click: saveCardAdd(selectedCard, cardAmounts)" class="btn btn-primary" data-dismiss="modal">Add</span>
             </div>
         </div>
     </div>

@@ -21,9 +21,12 @@
             c.hovering = ko.observable(c.hovering);
         });
 
+
         viewModel.title = ko.observable(viewModel.title);
         viewModel.advancedSearch = ko.observable(viewModel.advancedSearch);
         viewModel.search = ko.observable(viewModel.search);
+        viewModel.settings = ko.observable(viewModel.settings);
+        viewModel.colSize = ko.observable(viewModel.colSize);
 
         viewModel.colors = ko.observableArray([viewModel.colors]);
 
@@ -56,7 +59,6 @@
         viewModel.libSearch = ko.observableArray();
         viewModel.library = ko.observableArray();
         viewModel.deckIds = ko.observableArray();
-        viewModel.cardAmounts = ko.observable(viewModel.cardAmounts);
 
         viewModel.remove = this.remove;
         viewModel.clickAdd = this.clickAdd;
@@ -66,7 +68,15 @@
         viewModel.saveCardAdd = this.saveCardAdd;
 
         viewModel.cardName = ko.observable();
-        
+
+        viewModel.cardAmounts = ko.observable(viewModel.cardAmounts);
+        viewModel.cardAmounts.deckInfo = ko.observableArray(viewModel.cardAmounts.deckInfo);
+
+        viewModel.incrementAmount = this.incrementAmount;
+        viewModel.deincrementAmount = this.deincrementAmount;
+
+        //$("#results").addClass("col-md-" + this.viewModel.colSize());
+
 
         $("#showAdvancedSearch").click(() => {
             this.viewModel.advancedSearch(true);
@@ -76,6 +86,13 @@
         $("#hideAdvancedSearch").click(() => {
             this.viewModel.advancedSearch(false);
             this.viewModel.search(true);
+        });
+        $(".settings").click(() => {
+            if (this.viewModel.settings()) {
+                this.viewModel.settings(false);
+            } else {
+                this.viewModel.settings(true);
+            }          
         });
 
         $("#search").click(() => {
@@ -410,23 +427,32 @@
     }
 
     clickAdd = (id) => {
-
+        var self = this;
         $.ajax({
             url: "/Cards/GetAddInfo",
             type: "POST",
             data: { cardId: id },
             cache: false,
             success: (results: any) => {
-                this.viewModel.cardAmounts(results);
+                self.viewModel.cardAmounts(results);
+                self.viewModel.cardAmounts().libraryAmount = ko.observable(self.viewModel.cardAmounts().libraryAmount);
+                self.viewModel.cardAmounts().deckInfo.forEach(d => {            
+                    d.deckAmount = ko.observable(d.deckAmount);
+                });
+                if (self.viewModel.cardAmounts().libraryAmount() > 0) {
+                    $("#minus_lib").removeClass("notAllowed").addClass("pointer");
+                } else {
+                    $("#minus_lib").removeClass("pointer").addClass("notAllowed");
+                }
 
                 $("#addCard").modal({
-                            show: true,
-                            backdrop: 'static'
-                        });
+                    show: true,
+                    backdrop: 'static'
+                });
             },
             error: error => {
             }
-        });       
+        });
     }
 
     hoverOverCard = (id) => {
@@ -448,7 +474,45 @@
         });
     }
 
+    incrementAmount = (index, deckName) => {
+        if (deckName === "library") {
+            if (this.viewModel.cardAmounts().libraryAmount() === 0) {
+                $("#minus_" + index).removeClass("notAllowed").addClass("pointer");
+            }
+            this.viewModel.cardAmounts().libraryAmount(this.viewModel.cardAmounts().libraryAmount() + 1);
+        } else {
+            this.viewModel.cardAmounts().deckInfo.forEach(d => {
+                if (d.deckName === deckName) {
+                    if (d.deckAmount() === 0) {
+                        $("#minus_" + index).removeClass("notAllowed").addClass("pointer");
+                    }
+                    d.deckAmount(Number(d.deckAmount()) + 1);                
+                }
+            });
+        }        
+    }
 
+    deincrementAmount = (index, deckName) => {
+        if (deckName === "library") {
+            if (this.viewModel.cardAmounts().libraryAmount() === 1) {
+                $("#minus_" + index).removeClass("pointer").addClass("notAllowed");
+            }
+            if (this.viewModel.cardAmounts().libraryAmount() > 0) {
+                this.viewModel.cardAmounts().libraryAmount(this.viewModel.cardAmounts().libraryAmount() - 1);
+            }
+        } else {
+            this.viewModel.cardAmounts().deckInfo.forEach(d => {
+                if (d.deckName === deckName) {
+                    if (d.deckAmount() === 1) {
+                        $("#minus_" + index).removeClass("pointer").addClass("notAllowed");
+                    }
+                    if (d.deckAmount() > 0) {
+                        d.deckAmount(d.deckAmount() - 1);
+                    }                   
+                }
+            });
+        }       
+    }
 
     remove = (id, list) => {
         var self = this;
@@ -614,22 +678,24 @@
         }
     }
 
-    saveCardAdd(selectedCard, library, deckIds) {
-
+    saveCardAdd(selectedCard, cardAmounts) {
         if (selectedCard() !== 0) {
-            var decks = deckIds();
-            if (library().length !== 0) {
-                decks.push(0);
-            }
-            var test = $("#newDeck").val();
+            //var decks = deckIds();
+            //if (library().length !== 0) {
+            //    decks.push(0);
+            //}
+            //var test = $("#newDeck").val();
 
             $.ajax({
                 url: "/Cards/AddCard",
                 type: "POST",
-                data: { cardNumber: selectedCard(), where: decks, howMany: $("#cardNumber").val(), newDeck: $("#newDeck").val() },
+                data: {
+                    cardNumber: selectedCard(),
+                    cardAmounts: cardAmounts()
+                }, // where: decks, howMany: $("#cardNumber").val(), newDeck: $("#newDeck").val() },
                 cache: false,
                 success: (results: any) => {
-                    deckIds([]);
+                    //deckIds([]);
                 },
                 error: error => {
                 }

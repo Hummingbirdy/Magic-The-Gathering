@@ -1,5 +1,5 @@
 ﻿@using MTG.Helpers
-@model MTG.Models.MyLibraryModel
+@model MTG.Entities.Models.MyLibraryModel
 @{
     ViewBag.Title = "All Cards";
     Layout = "~/Views/Shared/_CardsLayout.cshtml";
@@ -18,9 +18,20 @@
     </div>
     <div class="row">
         <!-- ko foreach: sets-->
-
-        <h1><span class="setHeaders" data-bind="text: name"></span> <button id="Addcardicon" data-bind="click: $root.expandSet()"><i class="fa fa-plus"></i></button></h1>
-
+        <h1><span class="setHeaders" data-bind="text: name"></span> </h1>
+        <!-- ko foreach: cards-->
+        <div class="col-md-3">
+            <div class="card-box">
+                @* data-bind="attr: {id: id}, event: { mouseover: $parent.hoverOverCard.bind($data, id), mouseout: $parent.hoverOffCard.bind($data, id)}">*@
+                <a data-bind="attr: {href: url}">
+                    <img data-bind="attr: {src: src}"/>
+                </a>
+                <div class="positioner">
+                    <button id="AddCardIcon" align="right"><b><span data-bind="text: amount"></span></b></button>
+                </div>
+            </div>
+        </div>
+        <!-- /ko -->
         <!-- /ko -->
     </div>
 </body>

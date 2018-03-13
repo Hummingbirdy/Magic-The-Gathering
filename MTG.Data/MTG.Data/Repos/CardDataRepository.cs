@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -13,13 +14,18 @@ namespace MTG.Data.Repos
     {
         List<Card> GetAllCards();
         List<Card> GetCard(int id);
-       // List<string> GetAllNames();
+        List<Card> GetMyCards(string id);
+        List<Card> GetDeckCards(int deckId);
+            // List<string> GetAllNames();
         List<string> GetAllTypes();
         List<string> GetAllSubTypes();
         List<string> GetAllRaritys();
         List<Card> GetSetSearch(string setCode);
         List<Card> GetSearchResults(AdvancedSearch parameters);
         CardAmounts GetCardAmountForUser(int cardId, int accountId);
+        void UpdateDeckCardAmounts(List<CardAmountsPerDeck> decks, int cardId, int userId);
+        void UpdateLibraryCardAmount(int cardId, int userId, int amount, int recordId);
+
     }
 
     public class CardDataRepository : ICardDataRepository
@@ -32,7 +38,7 @@ namespace MTG.Data.Repos
         }
         public List<Card> GetAllCards()
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString );
+            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             var sqlString = $@"SELECT * FROM Cards WHERE [Set] = '{_setData.MostRecentExpansion().First().Code}' AND Number NOT LIKE '%b' ORDER BY ID";
             var cards = (List<Card>)db.Query<Card>(sqlString);
             return cards.ToList();
@@ -49,6 +55,36 @@ namespace MTG.Data.Repos
                 cards.AddRange((List<Card>)db.Query<Card>(sqlString));
             }
             return cards.ToList();
+        }
+        public List<Card> GetMyCards(string id)
+        {
+            id = (id == "3" || id == "4") ? "3, 4" : id;
+            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+            var sqlString = $@"  
+                                        SELECT
+	                                        c.[Name],
+                                            c.[Set],
+                                            c.Id,
+                                            l.amount
+                                        FROM
+	                                        Library l
+	                                        left join Cards c on l.CardId = c.Id
+	                                    Where 
+                                            l.UserId IN ({id})
+                                            AND l.IsActive = 1
+                                        AND Amount > 0";
+            var cards = (List<Card>)db.Query<Card>(sqlString);
+            return cards.ToList();
+        }
+
+        public List<Card> GetDeckCards(int deckId)
+        {
+            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+
+            string sqlString = $@"SELECT Id, [Name], [Type], Amount FROM Decks d JOIN Cards c on c.Id = d.CardId WHERE DeckId = {deckId} and isactive = 1 Order by Id";
+
+            var cards = (List<Card>)db.Query<Card>(sqlString);
+            return cards;
         }
 
         //public List<string> GetAllNames()
@@ -404,15 +440,67 @@ namespace MTG.Data.Repos
 
         public CardAmounts GetCardAmountForUser(int cardId, int userId)
         {
-            var amounts =  new CardAmounts();
+            var amounts = new CardAmounts();
             IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             var sqlString = $@"SELECT Name FROM Cards WHERE ID = {cardId}";
-            amounts.CardName = ((List<string>) db.Query<string>(sqlString)).FirstOrDefault();
+            amounts.CardName = ((List<string>)db.Query<string>(sqlString)).FirstOrDefault();
             sqlString = $@"SELECT Amount FROM Library WHERE UserId = {userId} AND CardId = {cardId} AND IsActive = 1";
             amounts.LibraryAmount = db.Query<int>(sqlString).FirstOrDefault();
-            sqlString = $@"SELECT DeckName, ISNULL(Amount, 0) AS DeckAmount FROM DeckNames n LEFT JOIN Decks d ON d.DeckId = n.ID AND d.CardId = {cardId} AND d.IsActive = 1 WHERE n.UserId = {userId}";
+            sqlString = $@"SELECT LibraryId FROM Library WHERE UserId = {userId} AND CardId = {cardId} AND IsActive = 1";
+            amounts.CurrentRecordId = db.Query<int>(sqlString).FirstOrDefault();
+            amounts.OrigionalLibraryAmount = amounts.LibraryAmount;
+            sqlString = $@"SELECT n.Id AS DeckId, DeckName, ISNULL(Amount, 0) AS DeckAmount, ISNULL(Amount,0) AS OrigionalDeckAmount, DecksId AS CurrentRecordId FROM DeckNames n LEFT JOIN Decks d ON d.DeckId = n.ID AND d.CardId = {cardId} AND d.IsActive = 1 WHERE n.UserId = {userId}";
             amounts.DeckInfo = ((List<CardAmountsPerDeck>)db.Query<CardAmountsPerDeck>(sqlString)).ToList();
+            amounts.DeckInfo.Add(new CardAmountsPerDeck { CurrentRecordId = 0, DeckId = 0, DeckName = "", DeckAmount = 0, OrigionalDeckAmount = 0 });
             return amounts;
+        }
+
+        public void UpdateLibraryCardAmount(int cardId, int userId, int amount, int recordId)
+        {
+            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+            var sqlString = $@"";
+            if (recordId != 0)
+            {
+                sqlString = $@"UPDATE Library SET IsActive = 0, ModifiedDate = GETDATE() WHERE LibraryId = {recordId} ";
+            }
+
+            sqlString = sqlString + $@"INSERT INTO Library VALUES ({userId}, {cardId}, {amount}, 1, GETDATE(), GETDATE()) ";
+            db.Query(sqlString);
+        }
+
+        public void UpdateDeckCardAmounts(List<CardAmountsPerDeck> decks, int cardId, int userId)
+        {
+            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+            var sqlString = $@"";
+            decks.ForEach(d =>
+            {
+                if (d.DeckAmount != d.OrigionalDeckAmount)
+                {
+                    if (d.CurrentRecordId != 0)
+                    {
+                        sqlString = sqlString + $@"Update Decks Set IsActive = 0, ModifiedDate = GETDATE() WHERE DecksId = {d.CurrentRecordId} ";
+                    }
+                    if (d.DeckId != 0)
+                    {
+                        sqlString = sqlString + $@"INSERT INTO Decks VALUES({d.DeckId}, {cardId}, {d.DeckAmount}, 1, GETDATE(), GETDATE()) ";
+                    }
+                    else
+                    {
+                        var newDeckId = InsertNewDeck(d.DeckName, userId);
+                        sqlString = sqlString + $@"INSERT INTO Decks VALUES({newDeckId}, {cardId}, {d.DeckAmount}, 1, GETDATE(), GETDATE()) ";
+                    }
+                }
+            });
+            db.Query(sqlString);
+
+        }
+
+        int InsertNewDeck(string deckName, int userId)
+        {
+            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+            var sqlString = $@"INSERT INTO DeckNames VALUES( {userId}, '{deckName}') " +
+                            $@"SELECT Id FROM DeckNames WHERE DeckName = '{deckName}' AND UserId = {userId}";
+            return db.Query<int>(sqlString).FirstOrDefault();
         }
     }
 }

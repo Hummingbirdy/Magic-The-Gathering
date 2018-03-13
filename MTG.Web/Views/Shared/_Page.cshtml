@@ -1,263 +1,280 @@
 ﻿<div class="jumbotron">
-    <div data-bind="visible: search">
-        <div class="row">
-            <div class="col-md-6">
-                <h1 data-bind="text: title"></h1>
-            </div>
-            <div class="col-md-6" align="right">
-                <br />
-                <input id="setSearch" class="main-dropdown" style="width:250px"> <button class="btn btn-primary" id="search">Search</button>
-            </div>
+<div data-bind="visible: search">
+    <div class="row">
+        <div class="col-md-6">
+            <h1 data-bind="text: title"></h1>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div align="right">
-                    <br /> <br />
-                    <button id="showAdvancedSearch" class="advanced-search">Advanced Search <i class="fa fa-plus"></i></button>
-                </div>
-            </div>
+        <div class="col-md-6" align="right">
+            <br />
+            <input id="setSearch" class="main-dropdown" style="width:250px"> <button class="btn btn-primary" id="search">Search</button>
         </div>
     </div>
-    <div data-bind="visible: advancedSearch">
-        <div class="row">
-            <div class="col-md-12">
-                <div align="right">
-                    <button id="hideAdvancedSearch" class="advanced-search">Advanced Search <i class="fa fa-minus"></i></button>
-                </div>
-            </div>
-        </div>
-        <div>
-            <div class="row">
-                <br />
-                <div class="col-md-6">
-
-                </div>
-                <div class="col-md-6">
-                    <div class="manaSelect">
-                        <img id="white" src="~/Content/Img/Icons/White_Mana.png" />
-                        <img id="blue" src="~/Content/Img/Icons/Blue_Mana.png" />
-                        <img id="black" src="~/Content/Img/Icons/Black_Mana.png" />
-                        <img id="red" src="~/Content/Img/Icons/Red_Mana.png" />
-                        <img id="green" src="~/Content/Img/Icons/Green_Mana.png" />
-                        <img id="colorless" src="~/Content/Img/Icons/colorless.png" />
-                    </div>
-                    <div class="operator-line">
-                        <div id="mana-operator" class="operator"><span data-bind="text: manaOperator"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-
-            </div>
-            <br />
-            <div class="row">
-                <div class="col-md-2">
-                    <label>Card Set: </label>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line" align="right">
-                        <div id="set-operator" class="operator"><span data-bind="text: setOperator"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <input id="cardSet" class="advanced-dropdown" style="width:300px" align="right" />
-
-                </div>
-                <div class="col-md-6 search-results">
-                    <!-- ko foreach: setList -->
-                    <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'set')"></i></div>
-                    <!-- /ko -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
-                    <label>Name: </label>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line">
-                        <div id="name-operator" class="operator"><span data-bind="text: nameOperator"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <input id="name" class="advanced-dropdown" style="width:300px" align="right" />
-                </div>
-                <div class="col-md-6 search-results">
-                    <!-- ko foreach: nameList -->
-                    <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'name')"></i></div>
-                    <!-- /ko -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
-                    <label>Card Type: </label>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line">
-                        <div id="type-operator" class="operator"><span data-bind="text: typeOperator"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <input id="cardType" class="advanced-dropdown" style="width:300px" align="right" />
-                </div>
-                <div class="col-md-6 search-results">
-                    <!-- ko foreach: typeList -->
-                    <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'type')"></i></div>
-                    <!-- /ko -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
-                    <label>Sub Type: </label>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line">
-                        <div id="subType-operator" class="operator"><span data-bind="text: subTypeOperator"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <input id="cardSubType" class="advanced-dropdown" style="width:300px" align="right" />
-                </div>
-                <div class="col-md-6 search-results">
-                    <!-- ko foreach: subTypeList -->
-                    <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'subType')"></i></div>
-                    <!-- /ko -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
-                    <label>Mana Cost: </label>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line">
-                        <div id="manaCost-operator" class="operator"><span data-bind="text: manaCostOperator"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line">
-                        <div id="manaCost-comparison" class="operator"><span data-bind="text: manaCostComparison"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <input id="cmc" class="k-textbox advanced-search" style="width:50px" align="right" />
-                </div>
-                <div class="col-md-6 search-results">
-                    <!-- ko foreach: manaCostList -->
-                    <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: comparison"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'manaCost')"></i></div>
-                    <!-- /ko -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
-                    <label>Power: </label>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line">
-                        <div id="power-operator" class="operator"><span data-bind="text: powerOperator"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line">
-                        <div id="power-comparison" class="operator"><span data-bind="text: powerComparison"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <input id="power" class="k-textbox advanced-search" style="width:50px" align="right" />
-                </div>
-                <div class="col-md-6 search-results">
-                    <!-- ko foreach: powerList -->
-                    <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: comparison"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'power')"></i></div>
-                    <!-- /ko -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
-                    <label>Toughness: </label>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line">
-                        <div id="toughness-operator" class="operator"><span data-bind="text: toughnessOperator"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line">
-                        <div id="toughness-comparison" class="operator"><span data-bind="text: toughnessComparison"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <input id="toughness" class="k-textbox advanced-search" style="width:50px" align="right" />
-                </div>
-                <div class="col-md-6 search-results">
-                    <!-- ko foreach: toughnessList -->
-                    <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: comparison"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'toughness')"></i></div>
-                    <!-- /ko -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
-                    <label>Rarity: </label>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line">
-                        <div id="rarity-operator" class="operator"><span data-bind="text: rarityOperator"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <input id="rarity" class="advanced-dropdown" style="width:300px" align="right" />
-                </div>
-                <div class="col-md-6 search-results">
-                    <!-- ko foreach: rarityList -->
-                    <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'rarity')"></i></div>
-                    <!-- /ko -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
-                    <label>Text: </label>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line">
-                        <div id="text-operator" class="operator"><span data-bind="text: textOperator"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <input id="text" class="k-textbox advanced-search" style="width:270px" align="right" />
-                </div>
-                <div class="col-md-6 search-results">
-                    <!-- ko foreach: textList -->
-                    <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'text')"></i></div>
-                    <!-- /ko -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
-                    <label>Artist: </label>
-                </div>
-                <div class="col-md-1">
-                    <div class="operator-line">
-                        <div id="artist-operator" class="operator"><span data-bind="text: artistOperator"></span> <i class="fa fa-caret-down"></i></div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <input id="artist" class="k-textbox advanced-search" style="width:270px" align="right" />
-                </div>
-                <div class="col-md-6 search-results">
-                    <!-- ko foreach: artistList -->
-                    <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'artist')"></i></div>
-                    <!-- /ko -->
-                </div>
-            </div>
-            <div class="col-md-12" align="right">
-                <input type="checkbox" value="LibSearch" data-bind="checked: libSearch" /> <label>In Library</label>
-            </div>
-            <div class="row" align="right">
-                <button class="btn btn-primary" id="advancedSearch">Search</button>
+    <div class="row">
+        <div class="col-md-12">
+            <div align="right">
+                <br /> <br />
+                <button id="showAdvancedSearch" class="advanced-search">Advanced Search <i class="fa fa-plus"></i></button>
             </div>
         </div>
     </div>
 </div>
+<div data-bind="visible: advancedSearch">
+<div class="row">
+    <div class="col-md-12">
+        <div align="right">
+            <button id="hideAdvancedSearch" class="advanced-search">Advanced Search <i class="fa fa-minus"></i></button>
+        </div>
+    </div>
+</div>
+<div>
+<div class="row">
+    <br />
+    <div class="col-md-6">
+
+    </div>
+    <div class="col-md-6">
+        <div class="manaSelect">
+            <img id="white" src="~/Content/Img/Icons/White_Mana.png" />
+            <img id="blue" src="~/Content/Img/Icons/Blue_Mana.png" />
+            <img id="black" src="~/Content/Img/Icons/Black_Mana.png" />
+            <img id="red" src="~/Content/Img/Icons/Red_Mana.png" />
+            <img id="green" src="~/Content/Img/Icons/Green_Mana.png" />
+            <img id="colorless" src="~/Content/Img/Icons/colorless.png" />
+        </div>
+        <div class="operator-line">
+            <div id="mana-operator" class="operator"><span data-bind="text: manaOperator"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+
+</div>
+<br />
+<div class="row">
+    <div class="col-md-2">
+        <label>Card Set: </label>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line" align="right">
+            <div id="set-operator" class="operator"><span data-bind="text: setOperator"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <input id="cardSet" class="advanced-dropdown" style="width:300px" align="right" />
+
+    </div>
+    <div class="col-md-6 search-results">
+        <!-- ko foreach: setList -->
+        <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'set')"></i></div>
+        <!-- /ko -->
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <label>Name: </label>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line">
+            <div id="name-operator" class="operator"><span data-bind="text: nameOperator"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <input id="name" class="advanced-dropdown" style="width:300px" align="right" />
+    </div>
+    <div class="col-md-6 search-results">
+        <!-- ko foreach: nameList -->
+        <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'name')"></i></div>
+        <!-- /ko -->
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <label>Card Type: </label>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line">
+            <div id="type-operator" class="operator"><span data-bind="text: typeOperator"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <input id="cardType" class="advanced-dropdown" style="width:300px" align="right" />
+    </div>
+    <div class="col-md-6 search-results">
+        <!-- ko foreach: typeList -->
+        <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'type')"></i></div>
+        <!-- /ko -->
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <label>Sub Type: </label>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line">
+            <div id="subType-operator" class="operator"><span data-bind="text: subTypeOperator"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <input id="cardSubType" class="advanced-dropdown" style="width:300px" align="right" />
+    </div>
+    <div class="col-md-6 search-results">
+        <!-- ko foreach: subTypeList -->
+        <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'subType')"></i></div>
+        <!-- /ko -->
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <label>Mana Cost: </label>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line">
+            <div id="manaCost-operator" class="operator"><span data-bind="text: manaCostOperator"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line">
+            <div id="manaCost-comparison" class="operator"><span data-bind="text: manaCostComparison"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <input id="cmc" class="k-textbox advanced-search" style="width:50px" align="right" />
+    </div>
+    <div class="col-md-6 search-results">
+        <!-- ko foreach: manaCostList -->
+        <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: comparison"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'manaCost')"></i></div>
+        <!-- /ko -->
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <label>Power: </label>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line">
+            <div id="power-operator" class="operator"><span data-bind="text: powerOperator"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line">
+            <div id="power-comparison" class="operator"><span data-bind="text: powerComparison"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <input id="power" class="k-textbox advanced-search" style="width:50px" align="right" />
+    </div>
+    <div class="col-md-6 search-results">
+        <!-- ko foreach: powerList -->
+        <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: comparison"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'power')"></i></div>
+        <!-- /ko -->
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <label>Toughness: </label>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line">
+            <div id="toughness-operator" class="operator"><span data-bind="text: toughnessOperator"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line">
+            <div id="toughness-comparison" class="operator"><span data-bind="text: toughnessComparison"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <input id="toughness" class="k-textbox advanced-search" style="width:50px" align="right" />
+    </div>
+    <div class="col-md-6 search-results">
+        <!-- ko foreach: toughnessList -->
+        <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: comparison"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'toughness')"></i></div>
+        <!-- /ko -->
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <label>Rarity: </label>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line">
+            <div id="rarity-operator" class="operator"><span data-bind="text: rarityOperator"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <input id="rarity" class="advanced-dropdown" style="width:300px" align="right" />
+    </div>
+    <div class="col-md-6 search-results">
+        <!-- ko foreach: rarityList -->
+        <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'rarity')"></i></div>
+        <!-- /ko -->
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <label>Text: </label>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line">
+            <div id="text-operator" class="operator"><span data-bind="text: textOperator"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <input id="text" class="k-textbox advanced-search" style="width:270px" align="right" />
+    </div>
+    <div class="col-md-6 search-results">
+        <!-- ko foreach: textList -->
+        <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'text')"></i></div>
+        <!-- /ko -->
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <label>Artist: </label>
+    </div>
+    <div class="col-md-1">
+        <div class="operator-line">
+            <div id="artist-operator" class="operator"><span data-bind="text: artistOperator"></span> <i class="fa fa-caret-down"></i></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <input id="artist" class="k-textbox advanced-search" style="width:270px" align="right" />
+    </div>
+    <div class="col-md-6 search-results">
+        <!-- ko foreach: artistList -->
+        <div class="bubble" data-bind="attr: {id: id}"><span data-bind="text: operator"></span> <span data-bind="text: value"></span>  <i class="fa fa-times" data-bind="click: $parent.remove.bind($data, id, 'artist')"></i></div>
+        <!-- /ko -->
+    </div>
+</div>
+<div class="col-md-12" align="right">
+    <input type="checkbox" value="LibSearch" data-bind="checked: libSearch" /> <label>In Library</label>
+</div>
+<div class="row" align="right">
+    <button class="btn btn-primary" id="advancedSearch">Search</button>
+</div>
+</div>
+</div>
+<div class="settings">
+    <i class="fa fa-cogs"></i>
+</div>
+</div>
+<!-- ko if: settings -->
+<div class="settingsBox">
+    <div class="row">
+        <div class="col-md-6">
+            <b>CARDS PER ROW? </b>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            3 <input type="radio" value='col-md-4' data-bind="checked: colSize"/> 4 <input type="radio" value='col-md-3' data-bind="checked: colSize"/>
+        </div>
+    </div>
+</div>
+<!-- /ko -->
 
 
 <div class="row">
     <!-- ko foreach: cards -->
-    <div class="col-md-3" >
+    <div data-bind="css: $parent.colSize()">
         <div class="card-box" data-bind="attr: {id: id}, event: { mouseover: $parent.hoverOverCard.bind($data, id), mouseout: $parent.hoverOffCard.bind($data, id)}">
             <a data-bind="attr: {href: url}">
                 <img data-bind="attr: {src: src}" />
