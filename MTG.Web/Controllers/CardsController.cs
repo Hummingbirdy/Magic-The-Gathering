@@ -166,7 +166,7 @@ namespace MTG.Controllers
                 IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
                 string idCheck = $@"SELECT ID FROM Users WHERE Email = '{User.Identity.Name}'";
                 var id = db.Query<int>(idCheck).First();
-                CardAmounts results = _cardData.GetCardAmountForUser (cardId, id );
+                CardAmounts results = _cardData.GetCardAmountForUser(cardId, id );
 
                 return new CustomJsonResult { Data = results, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }

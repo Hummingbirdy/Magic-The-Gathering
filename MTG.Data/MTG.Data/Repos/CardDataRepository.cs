@@ -440,13 +440,14 @@ namespace MTG.Data.Repos
 
         public CardAmounts GetCardAmountForUser(int cardId, int userId)
         {
+            string users  = (userId == 3 || userId == 4) ? "3, 4" : userId.ToString();
             var amounts = new CardAmounts();
             IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             var sqlString = $@"SELECT Name FROM Cards WHERE ID = {cardId}";
             amounts.CardName = ((List<string>)db.Query<string>(sqlString)).FirstOrDefault();
-            sqlString = $@"SELECT Amount FROM Library WHERE UserId = {userId} AND CardId = {cardId} AND IsActive = 1";
+            sqlString = $@"SELECT Amount FROM Library WHERE UserId IN ({users}) AND CardId = {cardId} AND IsActive = 1";
             amounts.LibraryAmount = db.Query<int>(sqlString).FirstOrDefault();
-            sqlString = $@"SELECT LibraryId FROM Library WHERE UserId = {userId} AND CardId = {cardId} AND IsActive = 1";
+            sqlString = $@"SELECT LibraryId FROM Library WHERE UserId IN ({users}) AND CardId = {cardId} AND IsActive = 1";
             amounts.CurrentRecordId = db.Query<int>(sqlString).FirstOrDefault();
             amounts.OrigionalLibraryAmount = amounts.LibraryAmount;
             sqlString = $@"SELECT n.Id AS DeckId, DeckName, ISNULL(Amount, 0) AS DeckAmount, ISNULL(Amount,0) AS OrigionalDeckAmount, DecksId AS CurrentRecordId FROM DeckNames n LEFT JOIN Decks d ON d.DeckId = n.ID AND d.CardId = {cardId} AND d.IsActive = 1 WHERE n.UserId = {userId}";
