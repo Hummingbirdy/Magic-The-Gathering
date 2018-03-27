@@ -62,6 +62,7 @@
 
         viewModel.remove = this.remove;
         viewModel.clickAdd = this.clickAdd;
+        viewModel.clickNext = this.clickNext;
         viewModel.hoverOverCard = this.hoverOverCard;
         viewModel.hoverOffCard = this.hoverOffCard;
         viewModel.selectedCard = ko.observable(viewModel.selectedCard);
@@ -93,6 +94,10 @@
             } else {
                 this.viewModel.settings(true);
             }          
+        });
+
+        $("#next").click(() => {
+
         });
 
         $("#search").click(() => {
@@ -424,6 +429,30 @@
         //        backdrop: 'static'
         //    });
         //});
+    }
+
+    clickNext = (id) => {
+        var self = this;
+        $.ajax({
+            url: "/Cards/GetAddInfo",
+            type: "POST",
+            data: { cardId: id },
+            cache: false,
+            success: (results: any) => {
+                self.viewModel.cardAmounts(results);
+                self.viewModel.cardAmounts().libraryAmount = ko.observable(self.viewModel.cardAmounts().libraryAmount);
+                self.viewModel.cardAmounts().deckInfo.forEach(d => {
+                    d.deckAmount = ko.observable(d.deckAmount);
+                });
+                if (self.viewModel.cardAmounts().libraryAmount() > 0) {
+                    $("#minus_lib").removeClass("notAllowed").addClass("pointer");
+                } else {
+                    $("#minus_lib").removeClass("pointer").addClass("notAllowed");
+                }
+            },
+            error: error => {
+            }
+        });
     }
 
     clickAdd = (id) => {

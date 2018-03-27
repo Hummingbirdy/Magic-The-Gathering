@@ -33,7 +33,7 @@ namespace MTG.Controllers
             var id = db.Query<int>(sqlString).First();
 
             List<Card> MyCards = _cardData.GetMyCards(id.ToString());
-            List<Set> Sets = _setData.GetMySets(id);
+         //   List<Set> Sets = _setData.GetMySets(id);
 
             MyCards.ForEach(c =>
             {
@@ -42,28 +42,28 @@ namespace MTG.Controllers
                 c.Hovering = false;
             });
 
-            List<LibSet> FinalSets = new List<LibSet>();
+          //  List<LibSet> FinalSets = new List<LibSet>();
 
-            Sets.ForEach(s =>
-            {
-                List<Card> CardsInSet = new List<Card>();
-                MyCards.ForEach(c =>
-                {
+            //Sets.ForEach(s =>
+            //{
+            //    List<Card> CardsInSet = new List<Card>();
+            //    MyCards.ForEach(c =>
+            //    {
 
-                    if (s.Code == c.Set)
-                    {
-                        CardsInSet.Add(new Card() { Name = c.Name, ID = c.ID, src = c.src, url = c.url, Amount = c.Amount });
-                    }
-                });
+            //        if (s.Code == c.Set)
+            //        {
+            //            CardsInSet.Add(new Card() { Name = c.Name, ID = c.ID, src = c.src, url = c.url, Amount = c.Amount });
+            //        }
+            //    });
                
-                FinalSets.Add(new LibSet() { Cards = CardsInSet, Name = s.Name, Colapsed = false });
-            });
+            //    FinalSets.Add(new LibSet() { Cards = CardsInSet, Name = s.Name, Colapsed = false });
+            //});
 
             
 
             return View( new MyLibraryModel()
             {
-                Sets = FinalSets
+                Cards = MyCards
             });
         }
     }

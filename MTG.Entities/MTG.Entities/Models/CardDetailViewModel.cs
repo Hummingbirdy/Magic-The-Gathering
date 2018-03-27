@@ -13,6 +13,7 @@ namespace MTG.Entities.Models
 
     public class CardAmounts
     {
+        public int CardId { get; set; }
         public string CardName { get; set; }
         public int LibraryAmount { get; set; }
         public int OrigionalLibraryAmount { get; set; }

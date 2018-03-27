@@ -8,7 +8,7 @@ namespace MTG.Entities.Models
 {
     public class MyLibraryModel
     {
-        public List<LibSet> Sets { get; set; }
+        public List<Card> Cards { get; set; }
     }
 
     public class LibSet

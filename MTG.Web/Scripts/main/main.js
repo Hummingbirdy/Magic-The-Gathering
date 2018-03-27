@@ -4,6 +4,30 @@ var AllCards = (function () {
         this.viewModel = viewModel;
         this.modalConatiner = $("#addCard");
         this.deckIds = ko.observableArray([]);
+        this.clickNext = function (id) {
+            var self = _this;
+            $.ajax({
+                url: "/Cards/GetAddInfo",
+                type: "POST",
+                data: { cardId: id },
+                cache: false,
+                success: function (results) {
+                    self.viewModel.cardAmounts(results);
+                    self.viewModel.cardAmounts().libraryAmount = ko.observable(self.viewModel.cardAmounts().libraryAmount);
+                    self.viewModel.cardAmounts().deckInfo.forEach(function (d) {
+                        d.deckAmount = ko.observable(d.deckAmount);
+                    });
+                    if (self.viewModel.cardAmounts().libraryAmount() > 0) {
+                        $("#minus_lib").removeClass("notAllowed").addClass("pointer");
+                    }
+                    else {
+                        $("#minus_lib").removeClass("pointer").addClass("notAllowed");
+                    }
+                },
+                error: function (error) {
+                }
+            });
+        };
         this.clickAdd = function (id) {
             var self = _this;
             $.ajax({
@@ -297,6 +321,7 @@ var AllCards = (function () {
         viewModel.deckIds = ko.observableArray();
         viewModel.remove = this.remove;
         viewModel.clickAdd = this.clickAdd;
+        viewModel.clickNext = this.clickNext;
         viewModel.hoverOverCard = this.hoverOverCard;
         viewModel.hoverOffCard = this.hoverOffCard;
         viewModel.selectedCard = ko.observable(viewModel.selectedCard);
@@ -322,6 +347,8 @@ var AllCards = (function () {
             else {
                 _this.viewModel.settings(true);
             }
+        });
+        $("#next").click(function () {
         });
         $("#search").click(function () {
             _this.search();

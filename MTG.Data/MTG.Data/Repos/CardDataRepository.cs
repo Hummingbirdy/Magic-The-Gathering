@@ -444,6 +444,7 @@ namespace MTG.Data.Repos
             var amounts = new CardAmounts();
             IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             var sqlString = $@"SELECT Name FROM Cards WHERE ID = {cardId}";
+            amounts.CardId = cardId;
             amounts.CardName = ((List<string>)db.Query<string>(sqlString)).FirstOrDefault();
             sqlString = $@"SELECT Amount FROM Library WHERE UserId IN ({users}) AND CardId = {cardId} AND IsActive = 1";
             amounts.LibraryAmount = db.Query<int>(sqlString).FirstOrDefault();

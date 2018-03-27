@@ -5932,6 +5932,7 @@ button.close {
   opacity: .5;
 }
 .modal-header {
+    background-color: #eeeeee;
   padding: 15px;
   border-bottom: 1px solid #e5e5e5;
 }
@@ -5950,6 +5951,7 @@ button.close {
   padding: 15px;
   text-align: right;
   border-top: 1px solid #e5e5e5;
+    background-color: #eee;
 }
 .modal-footer .btn + .btn {
   margin-bottom: 0;
