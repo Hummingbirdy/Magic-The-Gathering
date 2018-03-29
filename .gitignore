@@ -240,3 +240,5 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/Database/Database/Database.sln
+/Database/Database/Database/Database.sqlproj

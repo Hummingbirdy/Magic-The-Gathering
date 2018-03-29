@@ -10,7 +10,7 @@ using Dapper;
 
 namespace MTG.Data.Repos
 {
-    public interface ICardDataRepository
+    public interface ICardDataRepository : IGenericRepository<Card>
     {
         List<Card> GetAllCards();
         List<Card> GetCard(int id);
@@ -21,46 +21,41 @@ namespace MTG.Data.Repos
         List<string> GetAllSubTypes();
         List<string> GetAllRaritys();
         List<Card> GetSetSearch(string setCode);
-        List<Card> GetSearchResults(AdvancedSearch parameters);
+        List<Card> GetSearchResults(AdvancedSearch parameters, int id);
         CardAmounts GetCardAmountForUser(int cardId, int accountId);
         void UpdateDeckCardAmounts(List<CardAmountsPerDeck> decks, int cardId, int userId);
         void UpdateLibraryCardAmount(int cardId, int userId, int amount, int recordId);
 
     }
 
-    public class CardDataRepository : ICardDataRepository
+    public class CardDataRepository : GenericRepository<Card>, ICardDataRepository
     {
         private readonly ISetDataRepository _setData;
 
-        public CardDataRepository(ISetDataRepository setData)
+        public CardDataRepository(IDbTransaction transaction, ISetDataRepository setData)  : base(transaction)
         {
             _setData = setData;
         }
         public List<Card> GetAllCards()
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            var sqlString = $@"SELECT * FROM Cards WHERE [Set] = '{_setData.MostRecentExpansion().First().Code}' AND Number NOT LIKE '%b' ORDER BY ID";
-            var cards = (List<Card>)db.Query<Card>(sqlString);
+            var cards = Connection.Query<Card>($@"SELECT * FROM Cards WHERE [Set] = '{_setData.MostRecentExpansion().First().Code}' AND Number NOT LIKE '%b' ORDER BY ID", transaction: Transaction);
             return cards.ToList();
         }
 
         public List<Card> GetCard(int id)
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            var sqlString = "SELECT c.*, SetName = s.name FROM Cards c join [Sets] s on s.code = c.[set] WHERE ID = " + id;
-            var cards = (List<Card>)db.Query<Card>(sqlString);
+            var cards = Connection.Query<Card>("SELECT c.*, SetName = s.name FROM Cards c join [Sets] s on s.code = c.[set] WHERE ID = " + id, transaction: Transaction).ToList();
             if (cards.First().Number.Contains('a'))
             {
-                sqlString = "SELECT * FROM Cards WHERE ID = " + (id + 1);
-                cards.AddRange((List<Card>)db.Query<Card>(sqlString));
+                var newCard = Connection.Query<Card>("SELECT c.*, SetName = s.name FROM Cards c join [Sets] s on s.code = c.[set] WHERE ID = " + (id + 1), transaction: Transaction).ToList();
+                cards.AddRange(newCard);
             }
             return cards.ToList();
         }
         public List<Card> GetMyCards(string id)
         {
             id = (id == "3" || id == "4") ? "3, 4" : id;
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            var sqlString = $@"  
+            var cards = Connection.Query<Card>($@"  
                                         SELECT
 	                                        c.[Name],
                                             c.[Set],
@@ -72,19 +67,14 @@ namespace MTG.Data.Repos
 	                                    Where 
                                             l.UserId IN ({id})
                                             AND l.IsActive = 1
-                                        AND Amount > 0";
-            var cards = (List<Card>)db.Query<Card>(sqlString);
+                                        AND Amount > 0", transaction: Transaction);
             return cards.ToList();
         }
 
         public List<Card> GetDeckCards(int deckId)
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-
-            string sqlString = $@"SELECT Id, [Name], [Type], Amount FROM Decks d JOIN Cards c on c.Id = d.CardId WHERE DeckId = {deckId} and isactive = 1 Order by Id";
-
-            var cards = (List<Card>)db.Query<Card>(sqlString);
-            return cards;
+            var cards = Connection.Query<Card>($@"SELECT Id, [Name], [Type], Amount FROM Decks d JOIN Cards c on c.Id = d.CardId WHERE DeckId = {deckId} and isactive = 1 Order by Id", transaction : Transaction);
+            return cards.ToList();
         }
 
         //public List<string> GetAllNames()
@@ -98,40 +88,32 @@ namespace MTG.Data.Repos
 
         public List<string> GetAllTypes()
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            var sqlString = "SELECT * FROM CardTypes";
-            var types = (List<string>)db.Query<string>(sqlString);
-            return types;
+            var types = Connection.Query<string>("SELECT * FROM CardTypes", transaction:Transaction);
+            return types.ToList();
         }
 
         public List<string> GetAllSubTypes()
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            var sqlString = "SELECT * FROM SubTypes ORDER BY SubType";
-            var types = (List<string>)db.Query<string>(sqlString);
-            return types;
+            var types = Connection.Query<string>("SELECT * FROM SubTypes ORDER BY SubType", transaction:Transaction);
+            return types.ToList();
         }
 
         public List<string> GetAllRaritys()
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            var sqlString = "SELECT * FROM Raritys";
-            var raritys = (List<string>)db.Query<string>(sqlString);
-            return raritys;
+            var raritys = Connection.Query<string>("SELECT * FROM Raritys", transaction: Transaction);
+            return raritys.ToList();
         }
 
         public List<Card> GetSetSearch(string setCode)
         {
-
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            var sqlString = $@"SELECT * FROM Cards WHERE [Set] = '{setCode}' AND Number NOT LIKE '%b' ORDER BY ID";
-            var cards = (List<Card>)db.Query<Card>(sqlString);
+            var cards = Connection.Query<Card>($@"SELECT * FROM Cards WHERE [Set] = '{setCode}' AND Number NOT LIKE '%b' ORDER BY ID", transaction:Transaction);
             return cards.ToList();
         }
 
-        public List<Card> GetSearchResults(AdvancedSearch parameters)
+        public List<Card> GetSearchResults(AdvancedSearch parameters, int id)
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+            string users = (id == 3 || id == 4) ? "3, 4" : id.ToString();
+
             var clause = "WHERE Number NOT LIKE '%b' AND ID IS NOT NULL";
             if (parameters.SetCodes != null)
             {
@@ -419,22 +401,18 @@ namespace MTG.Data.Repos
                    $@"With lib as (
                            Select 
                                 CardId,
-                                Amount = SUM(CAST(Amount as int))
+                                Amount 
                             From
                                 Library
-                            Group By
-
-                                CardId
                             )
-                            SELECT  distinct c.Id, c.[Name], l.Amount FROM Cards c LEFT JOIN Library l on l.CardId = c.Id " + clause + " and l.amount > 0  order by id";
+                            SELECT  distinct c.Id, c.[Name], l.Amount FROM Cards c LEFT JOIN Library l on l.CardId = c.Id {clause} and l.amount > 0 and l.IsActive = 1 and UserId in ({users}) order by id";
             }
             else
             {
                 sqlString = $@"SELECT * FROM Cards " + clause + " ORDER BY Id";
             }
 
-
-            var cards = (List<Card>)db.Query<Card>(sqlString);
+            var cards = Connection.Query<Card>(sqlString, transaction:Transaction);
             return cards.ToList();
         }
 
@@ -442,24 +420,22 @@ namespace MTG.Data.Repos
         {
             string users  = (userId == 3 || userId == 4) ? "3, 4" : userId.ToString();
             var amounts = new CardAmounts();
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             var sqlString = $@"SELECT Name FROM Cards WHERE ID = {cardId}";
             amounts.CardId = cardId;
-            amounts.CardName = ((List<string>)db.Query<string>(sqlString)).FirstOrDefault();
+            amounts.CardName = Connection.Query<string>(sqlString, transaction:Transaction).FirstOrDefault();
             sqlString = $@"SELECT Amount FROM Library WHERE UserId IN ({users}) AND CardId = {cardId} AND IsActive = 1";
-            amounts.LibraryAmount = db.Query<int>(sqlString).FirstOrDefault();
+            amounts.LibraryAmount = Connection.Query<int>(sqlString, transaction:Transaction).FirstOrDefault();
             sqlString = $@"SELECT LibraryId FROM Library WHERE UserId IN ({users}) AND CardId = {cardId} AND IsActive = 1";
-            amounts.CurrentRecordId = db.Query<int>(sqlString).FirstOrDefault();
+            amounts.CurrentRecordId = Connection.Query<int>(sqlString, transaction:Transaction).FirstOrDefault();
             amounts.OrigionalLibraryAmount = amounts.LibraryAmount;
             sqlString = $@"SELECT n.Id AS DeckId, DeckName, ISNULL(Amount, 0) AS DeckAmount, ISNULL(Amount,0) AS OrigionalDeckAmount, DecksId AS CurrentRecordId FROM DeckNames n LEFT JOIN Decks d ON d.DeckId = n.ID AND d.CardId = {cardId} AND d.IsActive = 1 WHERE n.UserId = {userId}";
-            amounts.DeckInfo = ((List<CardAmountsPerDeck>)db.Query<CardAmountsPerDeck>(sqlString)).ToList();
+            amounts.DeckInfo = Connection.Query<CardAmountsPerDeck>(sqlString,transaction:Transaction).ToList();
             amounts.DeckInfo.Add(new CardAmountsPerDeck { CurrentRecordId = 0, DeckId = 0, DeckName = "", DeckAmount = 0, OrigionalDeckAmount = 0 });
             return amounts;
         }
 
         public void UpdateLibraryCardAmount(int cardId, int userId, int amount, int recordId)
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             var sqlString = $@"";
             if (recordId != 0)
             {
@@ -467,12 +443,11 @@ namespace MTG.Data.Repos
             }
 
             sqlString = sqlString + $@"INSERT INTO Library VALUES ({userId}, {cardId}, {amount}, 1, GETDATE(), GETDATE()) ";
-            db.Query(sqlString);
+            Connection.Query(sqlString, transaction:Transaction);
         }
 
         public void UpdateDeckCardAmounts(List<CardAmountsPerDeck> decks, int cardId, int userId)
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             var sqlString = $@"";
             decks.ForEach(d =>
             {
@@ -493,16 +468,15 @@ namespace MTG.Data.Repos
                     }
                 }
             });
-            db.Query(sqlString);
+            Connection.Query(sqlString, transaction:Transaction);
 
         }
 
         int InsertNewDeck(string deckName, int userId)
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             var sqlString = $@"INSERT INTO DeckNames VALUES( {userId}, '{deckName}') " +
                             $@"SELECT Id FROM DeckNames WHERE DeckName = '{deckName}' AND UserId = {userId}";
-            return db.Query<int>(sqlString).FirstOrDefault();
+            return Connection.Query<int>(sqlString, transaction:Transaction).FirstOrDefault();
         }
     }
 }

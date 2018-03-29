@@ -8,34 +8,36 @@ using Dapper;
 
 namespace MTG.Data.Repos
 {
-    public interface ISetDataRepository
+    public interface ISetDataRepository : IGenericRepository<Set>
     {
         List<Set> MostRecentExpansion();
         List<Set> GetAllSets(bool expansionsOnly = true);
         List<Set> GetMySets(int id);
     }
-    public class SetDataRepository : ISetDataRepository
+    public class SetDataRepository : GenericRepository<Set>, ISetDataRepository
     {
+        public SetDataRepository(IDbTransaction transaction) : base(transaction)
+        {
+
+        }
         public List<Set> MostRecentExpansion()
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            var sqlString = "SELECT TOP 1 * FROM [Sets] WHERE [Type] = 'expansion' ORDER BY ReleaseDate DESC";
-            var set = (List<Set>)db.Query<Set>(sqlString);
-            return set;
+            var set = Connection.Query<Set>("SELECT TOP 1 * FROM [Sets] WHERE [Type] = 'expansion' ORDER BY ReleaseDate DESC", transaction:Transaction);
+            return set.ToList();
         }
 
         public List<Set> GetAllSets(bool expansionsOnly = true)
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             var sqlString = expansionsOnly ? "SELECT * FROM [Sets] WHERE [Type] = 'expansion' ORDER BY ReleaseDate DESC" : "SELECT * FROM [Sets] ORDER BY ReleaseDate DESC";
-            var set = (List<Set>)db.Query<Set>(sqlString);
-            return set;
+            var set = Connection.Query<Set>(sqlString, transaction:Transaction);
+            return set.ToList();
         }
 
         public List<Set> GetMySets(int id)
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            var sqlString = @"	
+            var users = id.ToString();
+            users = (users == "3" || users == "4") ? "3, 4" : users;
+            var sqlString = $@"	
                                 SELECT
                                     DISTINCT
 
@@ -48,15 +50,12 @@ namespace MTG.Data.Repos
                                     left join[Sets] s ON s.Code = c.[Set]
 
                                 WHERE
-
-                                    l.UserId in (@users)
+                                    l.UserId in ({users})
                                     AND l.IsActive = 1
-
                                 ORDER BY
                                     ReleaseDate DESC";
 
-            var set = db.Query<Set>(sqlString, new {@user = "3, 4"}).ToList();
-
+            var set = Connection.Query<Set>(sqlString, transaction:Transaction).ToList();
             return set;
         }
     }

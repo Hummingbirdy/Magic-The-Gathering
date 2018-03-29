@@ -27,6 +27,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TypeScriptToolsVersion>2.2</TypeScriptToolsVersion>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -239,11 +240,13 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MyLibraryController.cs" />
     <Compile Include="DependencyResolution\ControllerConvention.cs" />
+    <Compile Include="DependencyResolution\DatabaseRegistry.cs" />
     <Compile Include="DependencyResolution\DefaultRegistry.cs" />
     <Compile Include="DependencyResolution\IoC.cs" />
     <Compile Include="DependencyResolution\MvcRegistry.cs" />
     <Compile Include="DependencyResolution\StructureMapDependencyScope.cs" />
     <Compile Include="DependencyResolution\StructureMapScopeModule.cs" />
+    <Compile Include="DependencyResolution\TransactionPerRequest.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -251,6 +254,7 @@
     <Compile Include="Infrastructure\Tasks\IRunAfterEachRequest.cs" />
     <Compile Include="Infrastructure\Tasks\IRunOnEachRequest.cs" />
     <Compile Include="Infrastructure\Tasks\IRunOnError.cs" />
+    <Compile Include="Infrastructure\Tasks\TaskRegistry.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AdvancedSearchModel.cs" />
     <Compile Include="Models\AllCardsHomeModel.cs" />
@@ -268,6 +272,7 @@
     <Compile Include="Models\MyLibraryModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utilities\Constants.cs" />
     <Compile Include="Utilities\JsonExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

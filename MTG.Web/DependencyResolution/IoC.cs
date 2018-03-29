@@ -15,6 +15,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using MTG.Infrastructure.Tasks;
 
 namespace MTG.DependencyResolution {
     using Models;
@@ -26,6 +27,9 @@ namespace MTG.DependencyResolution {
             return new Container(c =>
             {
                 c.AddRegistry<DefaultRegistry>();
+                c.AddRegistry(new DatabaseRegistry());
+                c.AddRegistry(new MvcRegistry());
+                c.AddRegistry(new TaskRegistry());
                 c.For<Microsoft.AspNet.Identity.IUserStore<ApplicationUser>>().Use<Microsoft.AspNet.Identity.EntityFramework.UserStore<ApplicationUser>>();
                 c.For<System.Data.Entity.DbContext>().Use(() => new ApplicationDbContext());
                 c.For<Microsoft.Owin.Security.IAuthenticationManager>().Use(() => HttpContext.Current.GetOwinContext().Authentication);

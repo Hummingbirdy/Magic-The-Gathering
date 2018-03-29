@@ -11,57 +11,54 @@ using Dapper;
 
 namespace MTG.Data.Repos
 {
-    public interface IDeckDataRepository
+    public interface IDeckDataRepository : IGenericRepository<MyDecks>
     {
         List<MyDecks> GetMyDecks(string user);
         string GetDeckName(int deckId);
         int GetDeckLength(int deckId);
         string GetDeckColors(int deckId);
     }
-    public class DeckDataRepository : IDeckDataRepository
+    public class DeckDataRepository : GenericRepository<MyDecks>, IDeckDataRepository
     {
+        public DeckDataRepository(IDbTransaction transaction) : base(transaction)
+        {
+
+        }
         public List<MyDecks> GetMyDecks(string userEmail)
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-
             string sqlString = $@"SELECT ID FROM Users WHERE Email = '{userEmail}'";
-            var id = db.Query<string>(sqlString).First();
+            var id = Connection.Query<string>(sqlString, transaction:Transaction).First();
 
             sqlString = $@"SELECT * FROM DeckNames WHERE UserId = {id} ";
 
-            var decks = (List<MyDecks>)db.Query<MyDecks>(sqlString);
-            return decks;
+            var decks = Connection.Query<MyDecks>(sqlString, transaction:Transaction);
+            return decks.ToList();
         }
 
         public string GetDeckName(int deckId)
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-
             string sqlString = $@"SELECT DeckName FROM DeckNames WHERE ID = {deckId}";
 
-            var name = db.Query<string>(sqlString).First();
+            var name = Connection.Query<string>(sqlString, transaction:Transaction).First();
             return name;
         }
 
         public int GetDeckLength(int deckId)
         {
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-
             string sqlString = $@"SELECT SUM(Amount) FROM Decks WHERE DeckId = {deckId}";
 
-            var amount = db.Query<string>(sqlString).First();
-            return amount ==  null ? 0 : Int32.Parse(amount);
+            var amount = Connection.Query<string>(sqlString, transaction:Transaction).First();
+            return amount ==  null ? 0 : int.Parse(amount);
         }
 
         public string GetDeckColors(int deckId)
         {
             var colors = "";
             var colorIcons = "";
-            IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
 
             string sqlString = $@"SELECT DISTINCT ColorIdentity FROM Decks d JOIN Cards c on c.Id = d.CardId  WHERE DeckId = {deckId}";
 
-            List<string> identites = (List<string>)db.Query<string>(sqlString);
+            var identites = Connection.Query<string>(sqlString, transaction:Transaction).ToList();
 
             identites.ForEach(i =>
             {

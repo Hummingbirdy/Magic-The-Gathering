@@ -140,7 +140,11 @@ namespace MTG.Controllers
         {
             try
             {
-                List<Card> results = _cardData.GetSearchResults(searchParameters);
+                IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+                string idCheck = $@"SELECT ID FROM Users WHERE Email = '{User.Identity.Name}'";
+                var id = db.Query<int>(idCheck).First();
+
+                List<Card> results = _cardData.GetSearchResults(searchParameters, id);
 
                 results.ForEach(c =>
                 {
