@@ -328,11 +328,15 @@
     <Content Include="Content\Img\Icons\x.png" />
     <Content Include="Content\Img\Icons\y.png" />
     <Content Include="Content\Img\Icons\z.png" />
+    <Content Include="Content\Login.css" />
+    <Content Include="Content\Login.js" />
     <Content Include="Content\plugins\kendo\kendo.bootstrap.min.css" />
     <Content Include="Content\plugins\kendo\kendo.bootstrap.mobile.min.css" />
     <Content Include="Content\plugins\kendo\kendo.common.core.min.css" />
     <Content Include="Content\plugins\kendo\kendo.common.min.css" />
     <Content Include="Content\StyleSheet1.css" />
+    <Content Include="Content\Templates\Account\css\main.css" />
+    <Content Include="Content\Templates\Account\css\util.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
