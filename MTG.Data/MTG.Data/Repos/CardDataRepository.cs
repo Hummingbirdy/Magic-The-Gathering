@@ -73,7 +73,7 @@ namespace MTG.Data.Repos
 
         public List<Card> GetDeckCards(int deckId)
         {
-            var cards = Connection.Query<Card>($@"SELECT Id, [Name], [Type], Amount FROM Decks d JOIN Cards c on c.Id = d.CardId WHERE DeckId = {deckId} and isactive = 1 Order by Id", transaction : Transaction);
+            var cards = Connection.Query<Card>($@"SELECT Id, [Name], [Type], Amount FROM Decks d JOIN Cards c on c.Id = d.CardId WHERE DeckId = {deckId} and isactive = 1 and Amount > 0 Order by Id", transaction : Transaction);
             return cards.ToList();
         }
 
