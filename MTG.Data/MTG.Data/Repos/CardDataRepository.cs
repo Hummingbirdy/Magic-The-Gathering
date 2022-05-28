@@ -106,7 +106,7 @@ namespace MTG.Data.Repos
 
         public List<Card> GetSetSearch(string setCode)
         {
-            var cards = Connection.Query<Card>($@"SELECT * FROM Cards WHERE [Set] = '{setCode}' AND Number NOT LIKE '%b' ORDER BY ID", transaction:Transaction);
+            var cards = Connection.Query<Card>($@"SELECT * FROM Cards WHERE [Set] = '{setCode}' AND Number NOT LIKE '%b' ORDER BY cast(dbo.fnRemoveNonNumericCharacters(Number)  as int)", transaction:Transaction);
             return cards.ToList();
         }
 
