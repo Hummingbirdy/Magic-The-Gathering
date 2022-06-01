@@ -1,4 +1,4 @@
-var AllCards = (function () {
+var AllCards = /** @class */ (function () {
     function AllCards(viewModel) {
         var _this = this;
         this.viewModel = viewModel;
@@ -48,7 +48,7 @@ var AllCards = (function () {
                         $("#minus_lib").removeClass("pointer").addClass("notAllowed");
                     }
                     $("#addCard").modal({
-                        show: true,
+                        // show: true,
                         backdrop: 'static'
                     });
                 },
@@ -729,13 +729,13 @@ var AllCards = (function () {
     };
     return AllCards;
 }());
-var CardDetail = (function () {
+var CardDetail = /** @class */ (function () {
     function CardDetail(viewModel) {
         this.viewModel = viewModel;
     }
     return CardDetail;
 }());
-var MyLibrary = (function () {
+var MyLibrary = /** @class */ (function () {
     function MyLibrary(viewModel) {
         var _this = this;
         this.viewModel = viewModel;
@@ -761,13 +761,13 @@ var MyLibrary = (function () {
     };
     return MyLibrary;
 }());
-var Decks = (function () {
+var Decks = /** @class */ (function () {
     function Decks(viewModel) {
         this.viewModel = viewModel;
     }
     return Decks;
 }());
-var DeckDetail = (function () {
+var DeckDetail = /** @class */ (function () {
     function DeckDetail(viewModel) {
         var _this = this;
         this.viewModel = viewModel;

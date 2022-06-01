@@ -475,7 +475,7 @@
                 }
 
                 $("#addCard").modal({
-                    show: true,
+                   // show: true,
                     backdrop: 'static'
                 });
             },
