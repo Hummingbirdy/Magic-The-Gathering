@@ -242,3 +242,5 @@ ModelManifest.xml
 .fake/
 /Database/Database/Database.sln
 /Database/Database/Database/Database.sqlproj
+
+MTG.Data/MTG.Data/App.config

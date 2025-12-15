@@ -255,23 +255,23 @@ namespace MTG.Controllers
             //IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             //var path = "$." + code + ".cards";
             ////var query = $@"
-            ////    DECLARE @Sets VARCHAR(MAX)
-            ////    SELECT @Sets =
-            ////    BulkColumn FROM OPENROWSET
-            ////    (BULK 'AllSets.json', DATA_SOURCE = 'MyAzureJson', SINGLE_BLOB) JSON;
+            DECLARE @Sets VARCHAR(MAX)
+                SELECT @Sets =
+                BulkColumn FROM OPENROWSET
+                (BULK 'AllSets.json', DATA_SOURCE = 'MyAzureJson', SINGLE_BLOB) JSON;
 
-            ////    INSERT INTO [New_Sets]
-            ////    SELECT Code, [name], ReleaseDate, Border, [Type], [Block], OldCode
-            ////    FROM OPENJSON(@Sets, '{path}')
-            ////    WITH(
-            ////        Code            nvarchar(50)    '$.code',
-            ////        [Name]          nvarchar(50)    '$.name',
-            ////        ReleaseDate     datetime        '$.releaseDate',
-            ////        Border          nvarchar(50)    '$.border',
-            ////        [Type]          nvarchar(50)    '$.type',
-            ////        [Block]         nvarchar(50)    '$.block',
-            ////        OldCode         nvarchar(50)    '$.oldCode'
-            ////    )";
+            INSERT INTO[New_Sets]
+                SELECT Code, [name], ReleaseDate, Border, [Type], [Block], OldCode
+                FROM OPENJSON(@Sets, '{path}')
+                WITH(
+                    Code            nvarchar(50)    '$.code',
+                    [Name]          nvarchar(50)    '$.name',
+                    ReleaseDate     datetime        '$.releaseDate',
+                    Border          nvarchar(50)    '$.border',
+                    [Type]          nvarchar(50)    '$.type',
+                    [Block]         nvarchar(50)    '$.block',
+                    OldCode         nvarchar(50)    '$.oldCode'
+                )";
 
             //var query = $@"
             //    DECLARE @Cards VARCHAR(MAX)
